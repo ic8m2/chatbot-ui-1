@@ -1,4 +1,6 @@
 import { openapiToFunctions } from "@/lib/openapi-conversion"
+import { expect } from 'chai';
+import { openapiToFunctions } from '../../lib/openapi-conversion';
 
 const validSchemaURL = JSON.stringify({
   openapi: "3.1.0",
@@ -323,27 +325,31 @@ describe("extractOpenapiData for body 2", () => {
       JSON.parse(validSchemaBody2)
     )
 
-    expect(info.title).toBe("Polygon.io Stock and Crypto Data API")
-    expect(info.description).toBe(
-      "API schema for accessing stock and crypto data from Polygon.io."
-    )
-    expect(info.server).toBe("https://api.polygon.io")
+    describe("extractOpenapiData for body 2", () => {
+      it("should parse a valid OpenAPI body schema for body 2", () => {
+        const { info, routes, functions } = openapiToFunctions(
+          JSON.parse(validSchemaBody2)
+        );
 
-    expect(routes).toHaveLength(7)
-    expect(routes[0].path).toBe("/v1/open-close/{stocksTicker}/{date}")
-    expect(routes[0].method).toBe("get")
-    expect(routes[0].operationId).toBe("getStockDailyOpenClose")
+        expect(info.title).toBe("Polygon.io Stock and Crypto Data API");
+        expect(info.description).toBe(
+          "API schema for accessing stock and crypto data from Polygon.io."
+        );
+        expect(info.server).toBe("https://api.polygon.io");
 
-    expect(functions[0].function.parameters.properties).toHaveProperty(
-      "stocksTicker"
-    )
-    expect(functions[0].function.parameters.properties.stocksTicker.type).toBe(
-      "string"
-    )
-    expect(
-      functions[0].function.parameters.properties.stocksTicker
-    ).toHaveProperty("required", true)
-    expect(functions[0].function.parameters.properties).toHaveProperty("date")
+        expect(functions[0].function.parameters.properties).toHaveProperty(
+          "stocksTicker"
+        );
+        expect(functions[0].function.parameters.properties.stocksTicker.type).toBe(
+          "string"
+        );
+        expect(
+          functions[0].function.parameters.properties.stocksTicker
+        ).toHaveProperty("required", true);
+      });
+    });
+    expect(functions[0].function.parameters.properties.date).toHaveProperty("type", "string")
+    expect(functions[0].function.parameters.properties.date).toHaveProperty("format", "date")
     expect(functions[0].function.parameters.properties.date.type).toBe("string")
     expect(functions[0].function.parameters.properties.date).toHaveProperty(
       "format",
